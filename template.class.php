@@ -31,7 +31,7 @@ class Template
 
 	private function init () 
 	{
-		$adSize = $this->getSizeFromFilename($this->filename);
+		$adSize = Template::getSizeFromFilename($this->filename);
 
 		if(count($adSize) >= 2) {
 			$this->data['adwidth'] 	= $adSize['w'];
@@ -102,7 +102,7 @@ class Template
 		}
 
 
-		$keys 	= $this->toRegex(array_keys($this->data));
+		$keys 	= Template::toRegex(array_keys($this->data));
 		$values 	= array_values($this->data);
 
 		$this->rendered = preg_replace($keys, $values, $this->raw);

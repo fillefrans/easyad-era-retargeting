@@ -45,14 +45,16 @@
 	}
 
 	foreach ($templates as $key => $template) {
-		print($key . "<br />\n");
+		print("<a name='$key' href='#$key'>$key</a><br />\n");
 
 		$defaults = array(
+			"custom4" 		=> "images/test.jpg", 
 			"custom9" 		=> "Smakfull enplansvilla mot natur och strövområde", 
 			"shouttitle" 	=> "UPPSALA – LUTHAGEN, GÖTGATAN 13"
 			);
 
 		$template->render($defaults);
+		print("<a name='$key-src' href='#$key-src'>$key-src</a>\n");
 		$template->showSource();
 	}
 
