@@ -1,9 +1,12 @@
-easyad-era-retargeting
+templates
 ======================
 
-Diverse annonseformater for Era på Blocket
 
-* Enkel index.php som inkluderer alle *.html i gjeldende mappe.
+* simple index.php 
+ - picks up all files that conform to naming convention [nn]x[nn].html from subfolders.
+ - displays simple navigation
 
-* Enkel template-klasse som rendrer med eksempel-variabler
+* simple Template class
+ - for rendering 
+ - for displaying template source code
 
