@@ -22,8 +22,6 @@
 			}
 		</style>
 
-
-
 	</head>
 	<body>
 
@@ -117,6 +115,8 @@
 		"shouttext" 	=> "Nyrenoverad enplansvilla om 74 välplanerade kvadrat! Stor södervänd tomt med bl a skog och allmänning som granne"
 		);
 
+
+	ksort($templates);
 
 	// then render all the templates with example data
 	foreach ($templates as $key => $template) {
