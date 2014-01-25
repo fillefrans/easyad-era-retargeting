@@ -4,6 +4,15 @@
 
     <style type="text/css">
 
+      #editor { 
+        position  : absolute;
+        top       : 0;
+        right     : 0;
+        bottom    : 0;
+        left      : 0;
+      }
+
+
       .sourcecode {
         width   : 80%;
         display : none;
@@ -15,7 +24,11 @@
       }
 
       .horizontal ul {
-        width : 100%;
+        width   : 100%;
+        display : inline;
+
+        list-style-type : none; 
+        padding-right   : 20px;
       }
 
       .horizontal li {
@@ -26,34 +39,20 @@
 
     </style>
 
-  <script src="assets/js/lib/codemirror.min.js"></script>
-  <link rel="stylesheet" href="assets/css/codemirror.css" />
-
   </head>
   <body>
 
 
 
+
     <div class="horizontal">
-      <ul id="toc" style="display:inline; list-style-type: none; padding-right: 20px;"></ul>
+      <ul id="toc"></ul>
     </div>
 
     <script>
 
 
-
       window.addEventListener('load', function() {
-
-        var
-          sourceEditor = null,
-          editorOptions = {
-            lineNumbers : true,
-            lineWrapping : true,
-            viewPortMargin : Infinity,
-            tabSize : 3,
-            readOnly : true
-          };
-
 
         /*  support functions  */
         function insertAfter(referenceNode, newNode) {
@@ -64,7 +63,9 @@
         function onHashChange () {
           var
             currentId       = window.location.hash.substr(1),
-            currentElement  = document.getElementById(currentId);
+            editorId        = currentId.replace("-source", "-editor"),
+            currentElement  = document.getElementById(currentId),
+            editorElement   = document.getElementById(editorId);
 
           console.log("hashchange     : " + window.location.hash);
           console.log("currentId      : " + currentId);
@@ -73,20 +74,22 @@
 
           if(currentElement  && ( currentElement.tagName && currentElement.tagName === "TEXTAREA")) {
             // currentElement.style.display = "block";
-            sourceEditor = CodeMirror.fromTextArea(currentElement, editorOptions);
-            sourceEditor.getWrapperElement().style.display = 'block';
+            var
+              editor = ace.edit(editorId);
 
-            sourceEditor.on("change", function() {
-              var
-                wrap = sourceEditor.getWrapperElement(),
-                approp = sourceEditor.getScrollInfo().height > 200 ? "200px" : "auto";
-
-              if (wrap.style.height != approp) {
-                wrap.style.height = approp;
-                sourceEditor.refresh();
-              }
+            editor.setOptions({
+              maxLines : Infinity,
+              useWrapMode : true,
+              fontSize : 16
             });
-
+            // alert(currentElement.value);
+            editor.setTheme("ace/theme/monokai");
+            editor.getSession().setMode("ace/mode/html");
+            editor.getSession().setUseWrapMode(true);
+            editor.getSession().setUseSoftTabs(true);
+            editor.setReadOnly(true);
+            // editor.commands.bindKey("Tab", null);
+            editor.getSession().setValue(currentElement.value);
           }
 
         } // onHashChange
@@ -144,42 +147,35 @@
 
     <?php
 
-      require_once('template.class.php');
-
-      $templates = array();
-
-
-      // create a list of all "[nn]x[nn].html" files in current directory
-      if ($handle = opendir('.')) {
-        while (false !== ($entry = readdir($handle))) {
-          if( (strpos($entry, '.html') !== false) && filesize($entry) ) {
-            $templates[preg_replace("/.html/", "", $entry)] = new Template($entry);
-          }
-        }
-        closedir($handle);
-      }
+      require_once('templatelist.class.php');
 
 
       // set some example data for previewing purposes
       $defaults = array(
-        "custom4"     => "images/test.jpg", 
+        "custom4"     => "assets/images/test.jpg", 
         "custom9"     => "Smakfull enplansvilla mot natur och strövområde", 
         "shouttitle"  => "UPPSALA – LUTHAGEN, GÖTGATAN 13",
         "shouttext"   => "Nyrenoverad enplansvilla om 74 välplanerade kvadrat! Stor södervänd tomt med bl a skog och allmänning som granne"
         );
 
+      $templates = new TemplateList(".");
 
-      ksort($templates);
+      $templates->render($defaults, true); // second param is whether to show source code
 
-      // then render all the templates with example data
-      foreach ($templates as $key => $template) {
-        print("<p /><a name='$key' href='#$key'>$key</a>\n");
+      // $templates->showTimers();
 
-        $template->render($defaults);
-        $template->showSource();
-      }
+      // // then render all the templates with example data
+      // foreach ($templates->items as $key => $template) {
+      //   print("<p /><a name='$key' href='#$key'>$key</a>\n");
+
+      //   $template->render($defaults);
+      //   $template->showSource();
+      // }
 
     ?>
+
+
+  <script src="/pi/assets/js/lib/ace/ace.js" type="text/javascript" charset="utf-8"></script>
 
   </body>
 </html>
